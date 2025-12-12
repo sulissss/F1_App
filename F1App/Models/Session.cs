@@ -13,10 +13,10 @@ namespace F1App.Models
         public int EventId { get; set; }
 
         [Column("session_name")]
-        public string SessionName { get; set; }
+        public required string SessionName { get; set; }
 
         [Column("session_type")]
-        public string SessionType { get; set; }
+        public required string SessionType { get; set; }
 
         [Column("date_start")]
         public DateTime DateStart { get; set; }

@@ -20,12 +20,12 @@ namespace F1App.Models
         public int SeasonId { get; set; }
 
         [ForeignKey("DriverId")]
-        public Driver Driver { get; set; }
+        public required Driver Driver { get; set; }
 
         [ForeignKey("TeamId")]
-        public Team Team { get; set; }
+        public required Team Team { get; set; }
 
         [ForeignKey("SeasonId")]
-        public Season Season { get; set; }
+        public required Season Season { get; set; }
     }
 }

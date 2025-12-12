@@ -12,8 +12,8 @@ namespace F1App.Services
         Task<List<DriverStanding>> GetDriverStandingsAsync(int year);
         Task<List<RaceWinner>> GetRaceWinnersAsync(int year);
         Task<List<TeamViewModel>> GetTeamsWithDetailsAsync(int year);
-        Task<DriverStatsViewModel> GetDriverStatsAsync(int driverId, int year);
-        Task<RaceDetailsPageViewModel> GetRaceDetailsAsync(int sessionId);
-        Task<TeamDetailsViewModel> GetTeamDetailsAsync(int teamId, int year);
+        Task<DriverStatsViewModel?> GetDriverStatsAsync(int driverId, int year);
+        Task<RaceDetailsPageViewModel?> GetRaceDetailsAsync(int sessionId);
+        Task<TeamDetailsViewModel?> GetTeamDetailsAsync(int teamId, int year);
     }
 }

@@ -9,8 +9,8 @@ namespace F1App.Models
         [Column("circuit_id")]
         public int CircuitId { get; set; }
 
-        [Column("name")]
-        public string Name { get; set; }
+        [Column("circuit_short_name")]
+        public required string Name { get; set; }
 
         [Column("location")]
         public string? Location { get; set; }

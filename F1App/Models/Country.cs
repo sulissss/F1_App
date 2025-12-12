@@ -7,10 +7,10 @@ namespace F1App.Models
     {
         [Key]
         [Column("country_code")]
-        public string CountryCode { get; set; }
+        public required string CountryCode { get; set; }
 
         [Column("name")]
-        public string Name { get; set; }
+        public required string Name { get; set; }
 
         [Column("flag_image")]
         public byte[]? FlagImage { get; set; }

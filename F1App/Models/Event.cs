@@ -13,10 +13,10 @@ namespace F1App.Models
         public int SeasonId { get; set; }
 
         [Column("gp_name")]
-        public string GpName { get; set; }
+        public required string GpName { get; set; }
 
         [Column("country_name")]
-        public string CountryName { get; set; }
+        public required string CountryName { get; set; }
 
         [Column("date_start")]
         public DateTime DateStart { get; set; }

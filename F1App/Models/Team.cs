@@ -10,12 +10,12 @@ namespace F1App.Models
         public int TeamId { get; set; }
 
         [Column("name")]
-        public string Name { get; set; }
+        public required string Name { get; set; }
 
         [Column("short_name")]
         public string? ShortName { get; set; }
 
         [Column("colour_hex")]
-        public string? ColourHex { get; set; }
+        public required string ColourHex { get; set; }
     }
 }

@@ -13,10 +13,10 @@ namespace F1App.Models
         public int DriverNumber { get; set; }
 
         [Column("code")]
-        public string Code { get; set; }
+        public required string Code { get; set; }
 
         [Column("full_name")]
-        public string FullName { get; set; }
+        public required string FullName { get; set; }
 
         [Column("nationality")]
         public string? Nationality { get; set; }

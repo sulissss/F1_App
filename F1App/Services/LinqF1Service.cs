@@ -92,7 +92,7 @@ namespace F1App.Services
             return await _context.Database.SqlQueryRaw<RaceWinner>(query, year).ToListAsync();
         }
 
-        public async Task<DriverStatsViewModel> GetDriverStatsAsync(int driverId, int year)
+        public async Task<DriverStatsViewModel?> GetDriverStatsAsync(int driverId, int year)
         {
             // Fetch Driver and Team
             var driver = await _context.Drivers.FindAsync(driverId);
@@ -274,7 +274,7 @@ namespace F1App.Services
             return stats;
         }
 
-        public async Task<RaceDetailsPageViewModel> GetRaceDetailsAsync(int sessionId)
+        public async Task<RaceDetailsPageViewModel?> GetRaceDetailsAsync(int sessionId)
         {
             // Fetch Event Details using DTO to avoid mapping issues
             var header = await _context.Database.SqlQueryRaw<RaceDetailsHeaderDto>(@"
@@ -381,7 +381,7 @@ namespace F1App.Services
             return eventDetails;
         }
 
-        public async Task<TeamDetailsViewModel> GetTeamDetailsAsync(int teamId, int year)
+        public async Task<TeamDetailsViewModel?> GetTeamDetailsAsync(int teamId, int year)
         {
             // Get Team Name
             var team = await _context.Teams.FindAsync(teamId);
@@ -667,7 +667,7 @@ namespace F1App.Services
 
         private class TeamRaceRawDto
         {
-            public string GpName { get; set; }
+            public required string GpName { get; set; }
             public DateTime Date { get; set; }
             public int? Position { get; set; }
             public int SessionId { get; set; }
@@ -676,8 +676,8 @@ namespace F1App.Services
 
         private class RaceDetailsHeaderDto
         {
-            public string GpName { get; set; }
-            public string CircuitName { get; set; }
+            public required string GpName { get; set; }
+            public required string CircuitName { get; set; }
             public DateTime DateStart { get; set; }
         }
 
@@ -685,11 +685,11 @@ namespace F1App.Services
         {
             public int? Position { get; set; }
             public int DriverNumber { get; set; }
-            public string DriverName { get; set; }
-            public string DriverCode { get; set; }
-            public string TeamName { get; set; }
+            public required string DriverName { get; set; }
+            public required string DriverCode { get; set; }
+            public required string TeamName { get; set; }
             public int Laps { get; set; }
-            public string TimeOrRetired { get; set; }
+            public required string TimeOrRetired { get; set; }
             public decimal Points { get; set; }
         }
     }

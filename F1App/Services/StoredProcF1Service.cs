@@ -60,6 +60,7 @@ namespace F1App.Services
         {
              var query = @"
                 SELECT 
+                    s.session_id AS SessionId,
                     e.gp_name AS GpName,
                     e.date_start AS DateStart,
                     d.full_name AS DriverName,
@@ -67,6 +68,7 @@ namespace F1App.Services
                     COALESCE(t.name, 'Unknown Team') AS TeamName,
                     sr.number_of_laps AS Laps,
                     CAST(sr.duration AS VARCHAR(20)) AS Time,
+                    CAST(sr.duration AS FLOAT) AS Duration,
                     e.country_code AS CountryCode
                 FROM SessionResult sr
                 JOIN Session s ON sr.session_id = s.session_id
@@ -82,7 +84,7 @@ namespace F1App.Services
             return await _context.Database.SqlQueryRaw<RaceWinner>(query, year).ToListAsync();
         }
 
-        public async Task<DriverStatsViewModel> GetDriverStatsAsync(int driverId, int year)
+        public async Task<DriverStatsViewModel?> GetDriverStatsAsync(int driverId, int year)
         {
             // Reusing the logic from LinqF1Service as it uses Raw SQL which is compatible with StoredProc service philosophy (using DB directly)
             // In a real scenario, we might wrap this in a big Stored Procedure "sp_GetDriverStats"
@@ -106,19 +108,19 @@ namespace F1App.Services
             };
 
             // GP Stats
-            stats.GpRaces = await _context.Database.SqlQueryRaw<int>("SELECT COUNT(*) FROM SessionResult sr JOIN Session s ON sr.session_id = s.session_id WHERE sr.driver_id = {0} AND s.year = {1} AND s.session_type = 'Race'", driverId, year).SingleAsync();
-            stats.GpWins = await _context.Database.SqlQueryRaw<int>("SELECT COUNT(*) FROM SessionResult sr JOIN Session s ON sr.session_id = s.session_id WHERE sr.driver_id = {0} AND s.year = {1} AND s.session_type = 'Race' AND sr.position = 1", driverId, year).SingleAsync();
-            stats.GpPodiums = await _context.Database.SqlQueryRaw<int>("SELECT COUNT(*) FROM SessionResult sr JOIN Session s ON sr.session_id = s.session_id WHERE sr.driver_id = {0} AND s.year = {1} AND s.session_type = 'Race' AND sr.position <= 3", driverId, year).SingleAsync();
-            stats.GpTop10s = await _context.Database.SqlQueryRaw<int>("SELECT COUNT(*) FROM SessionResult sr JOIN Session s ON sr.session_id = s.session_id WHERE sr.driver_id = {0} AND s.year = {1} AND s.session_type = 'Race' AND sr.position <= 10", driverId, year).SingleAsync();
-            stats.Dnfs = await _context.Database.SqlQueryRaw<int>("SELECT COUNT(*) FROM SessionResult sr JOIN Session s ON sr.session_id = s.session_id WHERE sr.driver_id = {0} AND s.year = {1} AND sr.dnf = 1", driverId, year).SingleAsync();
+            stats.GpRaces = await _context.Database.SqlQueryRaw<int>("SELECT COUNT(*) AS Value FROM SessionResult sr JOIN Session s ON sr.session_id = s.session_id WHERE sr.driver_id = {0} AND s.year = {1} AND s.session_type = 'Race'", driverId, year).SingleAsync();
+            stats.GpWins = await _context.Database.SqlQueryRaw<int>("SELECT COUNT(*) AS Value FROM SessionResult sr JOIN Session s ON sr.session_id = s.session_id WHERE sr.driver_id = {0} AND s.year = {1} AND s.session_type = 'Race' AND sr.position = 1", driverId, year).SingleAsync();
+            stats.GpPodiums = await _context.Database.SqlQueryRaw<int>("SELECT COUNT(*) AS Value FROM SessionResult sr JOIN Session s ON sr.session_id = s.session_id WHERE sr.driver_id = {0} AND s.year = {1} AND s.session_type = 'Race' AND sr.position <= 3", driverId, year).SingleAsync();
+            stats.GpTop10s = await _context.Database.SqlQueryRaw<int>("SELECT COUNT(*) AS Value FROM SessionResult sr JOIN Session s ON sr.session_id = s.session_id WHERE sr.driver_id = {0} AND s.year = {1} AND s.session_type = 'Race' AND sr.position <= 10", driverId, year).SingleAsync();
+            stats.Dnfs = await _context.Database.SqlQueryRaw<int>("SELECT COUNT(*) AS Value FROM SessionResult sr JOIN Session s ON sr.session_id = s.session_id WHERE sr.driver_id = {0} AND s.year = {1} AND sr.dnf = 1", driverId, year).SingleAsync();
             
-            var gpPointsSql = "SELECT COALESCE(SUM(dbo.fn_GetPoints(sr.position)), 0) FROM SessionResult sr JOIN Session s ON sr.session_id = s.session_id WHERE sr.driver_id = {0} AND s.year = {1} AND s.session_type = 'Race'";
+            var gpPointsSql = "SELECT COALESCE(SUM(dbo.fn_GetPoints(sr.position)), 0) AS Value FROM SessionResult sr JOIN Session s ON sr.session_id = s.session_id WHERE sr.driver_id = {0} AND s.year = {1} AND s.session_type = 'Race'";
             stats.GpPoints = await _context.Database.SqlQueryRaw<int>(gpPointsSql, driverId, year).SingleAsync();
 
             // Sprint Stats
-            stats.SprintRaces = await _context.Database.SqlQueryRaw<int>("SELECT COUNT(*) FROM SessionResult sr JOIN Session s ON sr.session_id = s.session_id WHERE sr.driver_id = {0} AND s.year = {1} AND s.session_type = 'Sprint'", driverId, year).SingleAsync();
-            stats.SprintWins = await _context.Database.SqlQueryRaw<int>("SELECT COUNT(*) FROM SessionResult sr JOIN Session s ON sr.session_id = s.session_id WHERE sr.driver_id = {0} AND s.year = {1} AND s.session_type = 'Sprint' AND sr.position = 1", driverId, year).SingleAsync();
-            stats.SprintPodiums = await _context.Database.SqlQueryRaw<int>("SELECT COUNT(*) FROM SessionResult sr JOIN Session s ON sr.session_id = s.session_id WHERE sr.driver_id = {0} AND s.year = {1} AND s.session_type = 'Sprint' AND sr.position <= 3", driverId, year).SingleAsync();
+            stats.SprintRaces = await _context.Database.SqlQueryRaw<int>("SELECT COUNT(*) AS Value FROM SessionResult sr JOIN Session s ON sr.session_id = s.session_id WHERE sr.driver_id = {0} AND s.year = {1} AND s.session_type = 'Sprint'", driverId, year).SingleAsync();
+            stats.SprintWins = await _context.Database.SqlQueryRaw<int>("SELECT COUNT(*) AS Value FROM SessionResult sr JOIN Session s ON sr.session_id = s.session_id WHERE sr.driver_id = {0} AND s.year = {1} AND s.session_type = 'Sprint' AND sr.position = 1", driverId, year).SingleAsync();
+            stats.SprintPodiums = await _context.Database.SqlQueryRaw<int>("SELECT COUNT(*) AS Value FROM SessionResult sr JOIN Session s ON sr.session_id = s.session_id WHERE sr.driver_id = {0} AND s.year = {1} AND s.session_type = 'Sprint' AND sr.position <= 3", driverId, year).SingleAsync();
             
             var sprintPointsSql = @"
                 SELECT COALESCE(SUM(
@@ -132,7 +134,7 @@ namespace F1App.Services
                         WHEN sr.position = 7 THEN 2
                         WHEN sr.position = 8 THEN 1
                         ELSE 0 
-                    END), 0)
+                    END), 0) AS Value
                 FROM SessionResult sr 
                 JOIN Session s ON sr.session_id = s.session_id 
                 WHERE sr.driver_id = {0} AND s.year = {1} AND s.session_type = 'Sprint'";
@@ -148,26 +150,26 @@ namespace F1App.Services
             }
 
             // Career Stats
-            stats.CareerGpEntered = await _context.Database.SqlQueryRaw<int>("SELECT COUNT(*) FROM SessionResult sr JOIN Session s ON sr.session_id = s.session_id WHERE sr.driver_id = {0} AND s.session_type = 'Race'", driverId).SingleAsync();
-            stats.CareerPodiums = await _context.Database.SqlQueryRaw<int>("SELECT COUNT(*) FROM SessionResult sr JOIN Session s ON sr.session_id = s.session_id WHERE sr.driver_id = {0} AND s.session_type = 'Race' AND sr.position <= 3", driverId).SingleAsync();
+            stats.CareerGpEntered = await _context.Database.SqlQueryRaw<int>("SELECT COUNT(*) AS Value FROM SessionResult sr JOIN Session s ON sr.session_id = s.session_id WHERE sr.driver_id = {0} AND s.session_type = 'Race'", driverId).SingleAsync();
+            stats.CareerPodiums = await _context.Database.SqlQueryRaw<int>("SELECT COUNT(*) AS Value FROM SessionResult sr JOIN Session s ON sr.session_id = s.session_id WHERE sr.driver_id = {0} AND s.session_type = 'Race' AND sr.position <= 3", driverId).SingleAsync();
             
-            var highestFinish = await _context.Database.SqlQueryRaw<int?>("SELECT MIN(position) FROM SessionResult sr JOIN Session s ON sr.session_id = s.session_id WHERE sr.driver_id = {0} AND s.session_type = 'Race' AND sr.position > 0", driverId).SingleAsync();
+            var highestFinish = await _context.Database.SqlQueryRaw<int?>("SELECT MIN(position) AS Value FROM SessionResult sr JOIN Session s ON sr.session_id = s.session_id WHERE sr.driver_id = {0} AND s.session_type = 'Race' AND sr.position > 0", driverId).SingleAsync();
             stats.CareerHighestFinish = highestFinish ?? 0;
             if (stats.CareerHighestFinish > 0)
             {
-                stats.CareerHighestFinishCount = await _context.Database.SqlQueryRaw<int>("SELECT COUNT(*) FROM SessionResult sr JOIN Session s ON sr.session_id = s.session_id WHERE sr.driver_id = {0} AND s.session_type = 'Race' AND sr.position = {1}", driverId, stats.CareerHighestFinish).SingleAsync();
+                stats.CareerHighestFinishCount = await _context.Database.SqlQueryRaw<int>("SELECT COUNT(*) AS Value FROM SessionResult sr JOIN Session s ON sr.session_id = s.session_id WHERE sr.driver_id = {0} AND s.session_type = 'Race' AND sr.position = {1}", driverId, stats.CareerHighestFinish).SingleAsync();
             }
 
-            var highestGrid = await _context.Database.SqlQueryRaw<int?>("SELECT MIN(position) FROM StartingGrid sg JOIN Session s ON sg.session_id = s.session_id WHERE sg.driver_id = {0} AND s.session_type = 'Race' AND sg.position > 0", driverId).SingleAsync();
+            var highestGrid = await _context.Database.SqlQueryRaw<int?>("SELECT MIN(position) AS Value FROM StartingGrid sg JOIN Session s ON sg.session_id = s.session_id WHERE sg.driver_id = {0} AND s.session_type = 'Race' AND sg.position > 0", driverId).SingleAsync();
             stats.CareerHighestGridPosition = highestGrid ?? 0;
             if (stats.CareerHighestGridPosition > 0)
             {
-                stats.CareerHighestGridPositionCount = await _context.Database.SqlQueryRaw<int>("SELECT COUNT(*) FROM StartingGrid sg JOIN Session s ON sg.session_id = s.session_id WHERE sg.driver_id = {0} AND s.session_type = 'Race' AND sg.position = {1}", driverId, stats.CareerHighestGridPosition).SingleAsync();
+                stats.CareerHighestGridPositionCount = await _context.Database.SqlQueryRaw<int>("SELECT COUNT(*) AS Value FROM StartingGrid sg JOIN Session s ON sg.session_id = s.session_id WHERE sg.driver_id = {0} AND s.session_type = 'Race' AND sg.position = {1}", driverId, stats.CareerHighestGridPosition).SingleAsync();
             }
 
-            stats.CareerPolePositions = await _context.Database.SqlQueryRaw<int>("SELECT COUNT(*) FROM StartingGrid sg JOIN Session s ON sg.session_id = s.session_id WHERE sg.driver_id = {0} AND s.session_type = 'Race' AND sg.position = 1", driverId).SingleAsync();
+            stats.CareerPolePositions = await _context.Database.SqlQueryRaw<int>("SELECT COUNT(*) AS Value FROM StartingGrid sg JOIN Session s ON sg.session_id = s.session_id WHERE sg.driver_id = {0} AND s.session_type = 'Race' AND sg.position = 1", driverId).SingleAsync();
 
-            var careerPointsSql = "SELECT COALESCE(SUM(dbo.fn_GetPoints(sr.position)), 0) FROM SessionResult sr JOIN Session s ON sr.session_id = s.session_id WHERE sr.driver_id = {0} AND s.session_type = 'Race'";
+            var careerPointsSql = "SELECT COALESCE(SUM(dbo.fn_GetPoints(sr.position)), 0) AS Value FROM SessionResult sr JOIN Session s ON sr.session_id = s.session_id WHERE sr.driver_id = {0} AND s.session_type = 'Race'";
             stats.CareerPoints = await _context.Database.SqlQueryRaw<int>(careerPointsSql, driverId).SingleAsync();
             var careerSprintPointsSql = @"
                 SELECT COALESCE(SUM(
@@ -181,7 +183,7 @@ namespace F1App.Services
                         WHEN sr.position = 7 THEN 2
                         WHEN sr.position = 8 THEN 1
                         ELSE 0 
-                    END), 0)
+                    END), 0) AS Value
                 FROM SessionResult sr 
                 JOIN Session s ON sr.session_id = s.session_id 
                 WHERE sr.driver_id = {0} AND s.session_type = 'Sprint'";
@@ -190,20 +192,26 @@ namespace F1App.Services
             return stats;
         }
 
-        public async Task<RaceDetailsPageViewModel> GetRaceDetailsAsync(int sessionId)
+        public async Task<RaceDetailsPageViewModel?> GetRaceDetailsAsync(int sessionId)
         {
-            // Duplicating logic from LinqF1Service to satisfy interface and ensure functionality
-            // Fetch Event Details
-            var eventDetails = await _context.Database.SqlQueryRaw<RaceDetailsPageViewModel>(@"
+            // Fetch Event Details using DTO for proper mapping
+            var header = await _context.Database.SqlQueryRaw<RaceDetailsHeaderDto>(@"
                 SELECT 
                     e.gp_name AS GpName,
-                    e.circuit_short_name AS CircuitName,
+                    COALESCE(e.circuit_short_name, 'Unknown Circuit') AS CircuitName,
                     e.date_start AS DateStart
                 FROM Session s
                 JOIN Event e ON s.event_id = e.event_id
                 WHERE s.session_id = {0}", sessionId).FirstOrDefaultAsync();
 
-            if (eventDetails == null) return null;
+            if (header == null) return null;
+
+            var eventDetails = new RaceDetailsPageViewModel
+            {
+                GpName = header.GpName,
+                CircuitName = header.CircuitName,
+                DateStart = header.DateStart
+            };
 
             // Fetch Results
             var query = @"
@@ -291,7 +299,7 @@ namespace F1App.Services
             return eventDetails;
         }
 
-        public async Task<TeamDetailsViewModel> GetTeamDetailsAsync(int teamId, int year)
+        public async Task<TeamDetailsViewModel?> GetTeamDetailsAsync(int teamId, int year)
         {
             // Get Team Name
             var team = await _context.Teams.FindAsync(teamId);
@@ -537,22 +545,29 @@ namespace F1App.Services
 
         private class TeamRaceRawDto
         {
-            public string GpName { get; set; }
+            public required string GpName { get; set; }
             public DateTime Date { get; set; }
             public int? Position { get; set; }
             public int SessionId { get; set; }
             public int DriverId { get; set; }
         }
 
+        private class RaceDetailsHeaderDto
+        {
+            public required string GpName { get; set; }
+            public required string CircuitName { get; set; }
+            public DateTime DateStart { get; set; }
+        }
+
         private class RaceDetailsRowDto
         {
             public int? Position { get; set; }
             public int DriverNumber { get; set; }
-            public string DriverName { get; set; }
-            public string DriverCode { get; set; }
-            public string TeamName { get; set; }
+            public required string DriverName { get; set; }
+            public required string DriverCode { get; set; }
+            public required string TeamName { get; set; }
             public int Laps { get; set; }
-            public string TimeOrRetired { get; set; }
+            public required string TimeOrRetired { get; set; }
             public decimal Points { get; set; }
         }
     }

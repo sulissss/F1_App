@@ -12,11 +12,17 @@
         <h1 class="display-3 fw-bold fst-italic text-uppercase me-3" style="font-family: 'F1 Bold', sans-serif;">Statistics</h1>
     </div>
 
+    @if (currentStats == null)
+    {
+        <div class="alert alert-warning">Driver data not found.</div>
+        return;
+    }
+
     <div class="row">
         <!-- Driver Profile Header (Shared across seasons, using current stats) -->
         <div class="col-12 mb-4">
             @{
-                var bgColor = F1App.Services.ImageHelper.GetTeamColor(currentStats.Team?.Name);
+                var bgColor = F1App.Services.ImageHelper.GetTeamColor(currentStats?.Team?.Name);
             }
             <div class="d-flex align-items-center justify-content-between p-4 rounded position-relative overflow-hidden shadow-sm" style="background-color: @bgColor; min-height: 220px;">
                 

@@ -2,8 +2,8 @@ namespace F1App.Models
 {
     public class DriverStatsViewModel
     {
-        public Driver Driver { get; set; }
-        public Team Team { get; set; }
+        public required Driver Driver { get; set; }
+        public required Team? Team { get; set; }
         public int Year { get; set; }
 
         // Season Stats
