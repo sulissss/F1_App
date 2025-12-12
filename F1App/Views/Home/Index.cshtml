@@ -1,29 +1,86 @@
-﻿@model List<Season>
 @{
     ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4 text-danger">F1 Racing Hub</h1>
-    <p class="lead">Welcome to the ultimate Formula 1 statistics portal.</p>
-</div>
+<link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700;900&display=swap" rel="stylesheet">
 
-<div class="row mt-5">
-    <div class="col-md-12">
-        <h2 class="mb-4">Recent Seasons</h2>
-        <div class="row">
-            @foreach (var season in Model.Take(6))
-            {
-                <div class="col-md-4">
-                    <div class="card text-center">
-                        <div class="card-body">
-                            <h3 class="card-title display-3">@season.Year</h3>
-                            <p class="card-text text-muted">Status: @season.Status</p>
-                            <a asp-action="RaceResults" asp-route-year="@season.Year" class="btn btn-primary">View Races</a>
+<div class="container-fluid py-5" style="background: linear-gradient(180deg, #0D0D12 0%, #1a1a24 50%, #15151E 100%); min-height: 100vh;">
+    <!-- Hero Section -->
+    <div class="text-center mb-5 pt-4">
+        <h1 class="display-2 fw-bold text-white mb-3" style="font-family: 'Titillium Web', sans-serif; letter-spacing: 2px;">
+            <span style="color: #E80020;">F1</span> RACING DATABASE
+        </h1>
+        <p class="lead text-secondary fs-4" style="max-width: 600px; margin: 0 auto;">
+            Your gateway to comprehensive Formula 1 statistics, driver profiles, team data, and race archives.
+        </p>
+        <div class="mt-4">
+            <span class="badge bg-danger px-3 py-2 me-2">2024 Season</span>
+            <span class="badge bg-secondary px-3 py-2">20+ Drivers</span>
+            <span class="badge bg-secondary px-3 py-2 ms-2">10 Teams</span>
+        </div>
+    </div>
+
+    <!-- Navigation Cards -->
+    <div class="row g-4 justify-content-center px-4">
+        <!-- Drivers Card -->
+        <div class="col-md-6 col-lg-4">
+            <a href="/Home/Drivers" class="text-decoration-none">
+                <div class="card h-100 text-white border-0 shadow-lg position-relative overflow-hidden" style="background: linear-gradient(135deg, #E80020 0%, #9F0016 100%); transition: all 0.4s ease; min-height: 220px;">
+                    <div class="card-body d-flex flex-column justify-content-center align-items-center py-5 position-relative z-1">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px; background: rgba(255,255,255,0.2);">
+                            <i class="bi bi-person-fill" style="font-size: 2.5rem;"></i>
                         </div>
+                        <h3 class="card-title fw-bold mb-2" style="font-family: 'Titillium Web', sans-serif;">DRIVERS</h3>
+                        <p class="card-text opacity-75 text-center mb-0">Explore all F1 drivers, stats & standings</p>
+                    </div>
+                    <div class="position-absolute bottom-0 end-0 opacity-25" style="font-size: 8rem; line-height: 1; transform: translate(20%, 20%);">
+                        <i class="bi bi-person-fill"></i>
                     </div>
                 </div>
-            }
+            </a>
+        </div>
+
+        <!-- Teams Card -->
+        <div class="col-md-6 col-lg-4">
+            <a href="/Home/Teams" class="text-decoration-none">
+                <div class="card h-100 text-white border-0 shadow-lg position-relative overflow-hidden" style="background: linear-gradient(135deg, #3671C6 0%, #1E4A8C 100%); transition: all 0.4s ease; min-height: 220px;">
+                    <div class="card-body d-flex flex-column justify-content-center align-items-center py-5 position-relative z-1">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px; background: rgba(255,255,255,0.2);">
+                            <i class="bi bi-building" style="font-size: 2.5rem;"></i>
+                        </div>
+                        <h3 class="card-title fw-bold mb-2" style="font-family: 'Titillium Web', sans-serif;">TEAMS</h3>
+                        <p class="card-text opacity-75 text-center mb-0">All 10 F1 constructors & details</p>
+                    </div>
+                    <div class="position-absolute bottom-0 end-0 opacity-25" style="font-size: 8rem; line-height: 1; transform: translate(20%, 20%);">
+                        <i class="bi bi-building"></i>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Races Card -->
+        <div class="col-md-6 col-lg-4">
+            <a href="/Home/Races" class="text-decoration-none">
+                <div class="card h-100 text-white border-0 shadow-lg position-relative overflow-hidden" style="background: linear-gradient(135deg, #FF8000 0%, #CC6600 100%); transition: all 0.4s ease; min-height: 220px;">
+                    <div class="card-body d-flex flex-column justify-content-center align-items-center py-5 position-relative z-1">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center mb-3" style="width: 70px; height: 70px; background: rgba(255,255,255,0.2);">
+                            <i class="bi bi-flag-fill" style="font-size: 2.5rem;"></i>
+                        </div>
+                        <h3 class="card-title fw-bold mb-2" style="font-family: 'Titillium Web', sans-serif;">RACE ARCHIVE</h3>
+                        <p class="card-text opacity-75 text-center mb-0">Browse race calendar & results by season</p>
+                    </div>
+                    <div class="position-absolute bottom-0 end-0 opacity-25" style="font-size: 8rem; line-height: 1; transform: translate(20%, 20%);">
+                        <i class="bi bi-flag-fill"></i>
+                    </div>
+                </div>
+            </a>
         </div>
     </div>
 </div>
+
+<style>
+    .card:hover {
+        transform: translateY(-12px) scale(1.02);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.4) !important;
+    }
+</style>

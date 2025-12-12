@@ -221,3 +221,4 @@
 /Applications/Documents/DB_PROJ_A/F1App/obj/Debug/net9.0/compressed/j1fgklc63e-hubd2oibi3.gz
 /Applications/Documents/DB_PROJ_A/F1App/obj/Debug/net9.0/compressed/tu1ttfcy89-gdgtpaua0x.gz
 /Applications/Documents/DB_PROJ_A/F1App/obj/Debug/net9.0/compressed/jilg9hj1vz-fjxuilmoj1.gz
+/Applications/Documents/DB_PROJ_A/F1App/obj/Debug/net9.0/F1App.sourcelink.json
