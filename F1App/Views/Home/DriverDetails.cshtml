@@ -1,0 +1,235 @@
+@model List<F1App.Models.DriverStatsViewModel>
+@{
+    var currentStats = Model.FirstOrDefault(m => m.Year == 2024) ?? Model.FirstOrDefault();
+    ViewData["Title"] = currentStats?.Driver.FullName;
+}
+
+<link rel="stylesheet" href="~/css/driver-details-logo.css" />
+<link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;700;900&display=swap" rel="stylesheet">
+
+<div class="container mt-4">
+    <div class="d-flex align-items-center mb-5">
+        <h1 class="display-3 fw-bold fst-italic text-uppercase me-3" style="font-family: 'F1 Bold', sans-serif;">Statistics</h1>
+    </div>
+
+    <div class="row">
+        <!-- Driver Profile Header (Shared across seasons, using current stats) -->
+        <div class="col-12 mb-4">
+            @{
+                var bgColor = F1App.Services.ImageHelper.GetTeamColor(currentStats.Team?.Name);
+            }
+            <div class="d-flex align-items-center justify-content-between p-4 rounded position-relative overflow-hidden shadow-sm" style="background-color: @bgColor; min-height: 220px;">
+                
+                <!-- Dotted Pattern Overlay -->
+                <div class="position-absolute top-0 start-0 w-100 h-100" 
+                     style="background-image: radial-gradient(rgba(0, 0, 0, 0.2) 1px, transparent 1px); background-size: 4px 4px; pointer-events: none;">
+                </div>
+
+                <!-- Gradient for seamless blend -->
+                <div class="position-absolute top-0 end-0 w-50 h-100" 
+                     style="background: linear-gradient(to right, transparent, rgba(0,0,0,0.1)); pointer-events: none;">
+                </div>
+
+                <div class="d-flex align-items-center gap-4 position-relative" style="z-index: 2;">
+                    <img src="@currentStats.DriverHeadshotUrl" class="rounded-circle border border-2 border-white" style="width: 150px; height: 150px; object-fit: cover; background-color: #fff;" />
+                    <div>
+                        <div class="mb-2">
+                            <h1 class="display-4 text-uppercase text-white mb-0" style="font-family: 'Titillium Web', sans-serif; font-weight: 900;">@currentStats.Driver.FullName</h1>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                            <!-- Flag -->
+                            @if (!string.IsNullOrEmpty(currentStats.DriverNationality))
+                            {
+                                var flagUrl = F1App.Services.ImageHelper.GetCountryFlag(F1App.Services.ImageHelper.GetNationality(currentStats.Driver.Code));
+                                if (string.IsNullOrEmpty(flagUrl)) flagUrl = $"/img/flags/{currentStats.DriverNationality.ToLower()}.png";
+                                <img src="@flagUrl" alt="@currentStats.DriverNationality" class="rounded shadow-sm" style="width: 40px; height: auto;" />
+                            }
+                            <span class="h3 text-white mb-0 fw-bold" style="opacity: 0.9;">#@currentStats.Driver.DriverNumber</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Team Logo (Right) -->
+                @if (!string.IsNullOrEmpty(currentStats.TeamLogoUrl))
+                {
+                    <div class="pe-4 position-relative" style="z-index: 2;">
+                        <img src="@currentStats.TeamLogoUrl" class="driver-details-team-logo" />
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Left Column: Season Stats -->
+        <div class="col-lg-6 mb-4">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <h2 class="text-uppercase fw-bold mb-0" style="font-family: 'F1 Bold', sans-serif;"><span id="season-title">@currentStats.Year</span> Season</h2>
+                
+                <!-- Season Selector (Client-side) -->
+                <div class="d-flex align-items-center">
+                    <select id="season-selector" class="form-select bg-dark text-white border-secondary fw-bold" style="width: auto;" onchange="switchSeason(this.value)">
+                        @foreach (var item in Model.OrderByDescending(m => m.Year))
+                        {
+                            <!option value="@item.Year" selected="@(item.Year == currentStats.Year)">@item.Year</!option>
+                        }
+                    </select>
+                </div>
+            </div>
+            
+            @foreach (var stats in Model)
+            {
+                <div id="stats-@stats.Year" class="season-stats" style="display: @(stats.Year == currentStats.Year ? "block" : "none");">
+                    <div class="row mb-4">
+                        <div class="col-6">
+                            <div class="text-muted text-uppercase small">Season Position</div>
+                            <div class="display-4 fw-bold">@stats.SeasonPosition<span class="fs-4">@GetOrdinal(stats.SeasonPosition)</span></div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-muted text-uppercase small">Season Points</div>
+                            <div class="display-4 fw-bold">@stats.SeasonPoints.ToString("0.#")</div>
+                        </div>
+                    </div>
+
+                    <hr class="border-secondary" />
+
+                    <div class="row g-4">
+                        <div class="col-6">
+                            <div class="text-muted text-uppercase small">Grand Prix Races</div>
+                            <div class="h3 fw-bold">@stats.GpRaces</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-muted text-uppercase small">Grand Prix Points</div>
+                            <div class="h3 fw-bold">@stats.GpPoints.ToString("0.#")</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-muted text-uppercase small">Grand Prix Wins</div>
+                            <div class="h3 fw-bold">@stats.GpWins</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-muted text-uppercase small">Grand Prix Podiums</div>
+                            <div class="h3 fw-bold">@stats.GpPodiums</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-muted text-uppercase small">Grand Prix Poles</div>
+                            <div class="h3 fw-bold">@stats.GpPoles</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-muted text-uppercase small">Grand Prix Top 10s</div>
+                            <div class="h3 fw-bold">@stats.GpTop10s</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-muted text-uppercase small">DHL Fastest Laps</div>
+                            <div class="h3 fw-bold">@stats.FastestLaps</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-muted text-uppercase small">DNFs</div>
+                            <div class="h3 fw-bold">@stats.Dnfs</div>
+                        </div>
+                    </div>
+
+                    <hr class="border-secondary my-4" />
+
+                    <div class="row g-4">
+                        <div class="col-6">
+                            <div class="text-muted text-uppercase small">Sprint Races</div>
+                            <div class="h3 fw-bold">@stats.SprintRaces</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-muted text-uppercase small">Sprint Points</div>
+                            <div class="h3 fw-bold">@stats.SprintPoints.ToString("0.#")</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-muted text-uppercase small">Sprint Wins</div>
+                            <div class="h3 fw-bold">@stats.SprintWins</div>
+                        </div>
+                        <div class="col-6">
+                            <div class="text-muted text-uppercase small">Sprint Podiums</div>
+                            <div class="h3 fw-bold">@stats.SprintPodiums</div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- Right Column: Career Stats Card (Shared) -->
+        <div class="col-lg-6">
+            <div class="card bg-dark border-secondary h-100">
+                <div class="card-body p-5">
+                    <h2 class="text-uppercase fw-bold mb-5">Career Stats</h2>
+
+                    <div class="d-flex justify-content-between align-items-center mb-3 border-bottom border-secondary pb-2">
+                        <span class="text-muted">Grand Prix Entered</span>
+                        <span class="h4 fw-bold mb-0">@currentStats.CareerGpEntered</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3 border-bottom border-secondary pb-2">
+                        <span class="text-muted">Career Points</span>
+                        <span class="h4 fw-bold mb-0">@currentStats.CareerPoints.ToString("0.#")</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3 border-bottom border-secondary pb-2">
+                        <span class="text-muted">Highest Race Finish</span>
+                        <span class="h4 fw-bold mb-0">@currentStats.CareerHighestFinish <span class="small text-muted">(x@(currentStats.CareerHighestFinishCount))</span></span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3 border-bottom border-secondary pb-2">
+                        <span class="text-muted">Podiums</span>
+                        <span class="h4 fw-bold mb-0">@currentStats.CareerPodiums</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3 border-bottom border-secondary pb-2">
+                        <span class="text-muted">Highest Grid Position</span>
+                        <span class="h4 fw-bold mb-0">@currentStats.CareerHighestGridPosition <span class="small text-muted">(x@(currentStats.CareerHighestGridPositionCount))</span></span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3 border-bottom border-secondary pb-2">
+                        <span class="text-muted">Pole Positions</span>
+                        <span class="h4 fw-bold mb-0">@currentStats.CareerPolePositions</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3 border-bottom border-secondary pb-2">
+                        <span class="text-muted">World Championships</span>
+                        <span class="h4 fw-bold mb-0">@currentStats.WorldChampionships</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function switchSeason(year) {
+        // Update Title
+        document.getElementById('season-title').innerText = year;
+        
+        // Hide all stats
+        var stats = document.getElementsByClassName('season-stats');
+        for (var i = 0; i < stats.length; i++) {
+            stats[i].style.display = 'none';
+        }
+        
+        // Show selected stats
+        var selected = document.getElementById('stats-' + year);
+        if (selected) {
+            selected.style.display = 'block';
+        }
+    }
+</script>
+
+@functions {
+    public string GetOrdinal(int number)
+    {
+        if (number <= 0) return "";
+        switch (number % 100)
+        {
+            case 11:
+            case 12:
+            case 13:
+                return "th";
+        }
+        switch (number % 10)
+        {
+            case 1:
+                return "st";
+            case 2:
+                return "nd";
+            case 3:
+                return "rd";
+            default:
+                return "th";
+        }
+    }
+}

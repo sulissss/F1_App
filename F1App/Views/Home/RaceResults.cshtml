@@ -1,0 +1,59 @@
+@model List<RaceWinnerViewModel>
+@{
+    ViewData["Title"] = "Races";
+}
+
+<div class="container mt-4">
+    <h1 class="mb-4 text-uppercase fw-bold fst-italic">@ViewBag.Year Race Results</h1>
+
+    <div class="table-responsive">
+        <table class="table table-dark table-hover align-middle" style="background-color: #000;">
+            <thead>
+                <tr class="text-uppercase text-muted small border-bottom border-secondary">
+                    <th scope="col" class="py-3">Grand Prix</th>
+                    <th scope="col" class="py-3">Date</th>
+                    <th scope="col" class="py-3">Winner</th>
+                    <th scope="col" class="py-3">Team</th>
+                    <th scope="col" class="py-3 text-center">Laps</th>
+                    <th scope="col" class="py-3 text-end">Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var race in Model)
+                {
+                    <tr class="border-bottom border-secondary">
+                        <td class="py-3 fw-bold">
+                            <div class="d-flex align-items-center">
+                                @if (!string.IsNullOrEmpty(race.CountryFlagUrl))
+                                {
+                                    <img src="@race.CountryFlagUrl" alt="@race.GpName" class="me-2 rounded border border-secondary" style="width: 24px; height: auto;" />
+                                }
+                                <a asp-action="RaceDetails" asp-route-sessionId="@race.SessionId" class="text-white text-decoration-none fw-bold">@race.GpName</a>
+                            </div>
+                        </td>
+                        <td class="py-3">@race.DateStart.ToString("dd MMM")</td>
+                        <td class="py-3">
+                            <div class="d-flex align-items-center">
+                                <img src="@race.DriverHeadshotUrl" alt="@race.DriverName" class="me-2 rounded-circle" style="width: 30px; height: 30px; object-fit: cover; background-color: #333;" />
+                                <span class="fw-bold">@race.DriverName</span>
+                            </div>
+                        </td>
+                        <td class="py-3">
+                            <div class="d-flex align-items-center">
+                                @if (!string.IsNullOrEmpty(race.TeamLogoUrl))
+                                {
+                                    <div class="me-2 d-flex align-items-center justify-content-center bg-white rounded-circle" style="width: 32px; height: 32px; min-width: 32px; border: 1px solid #dee2e6;">
+                                        <img src="@race.TeamLogoUrl" alt="@race.TeamName" style="max-width: 80%; max-height: 80%; object-fit: contain;" />
+                                    </div>
+                                }
+                                <span>@race.TeamName</span>
+                            </div>
+                        </td>
+                        <td class="py-3 text-center">@race.Laps</td>
+                        <td class="py-3 text-end font-monospace">@race.Time</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

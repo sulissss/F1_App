@@ -1,0 +1,24 @@
+/* 
+   Edit this file to adjust the team logo on the Driver Details page.
+   You can change the size, visibility, or add filters.
+*/
+
+.driver-details-team-logo {
+    /* Size of the logo */
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+
+    /* Round shape */
+    border-radius: 50%;
+    background-color: white;
+    /* White background for visibility */
+    padding: 15px;
+    /* Padding inside the circle */
+
+    /* Shadow for depth */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+
+    /* Visibility: set to 'none' to hide */
+    display: block;
+}

@@ -1,0 +1,92 @@
+@model List<F1App.Models.DriverStatsViewModel>
+@{
+    ViewData["Title"] = "Drivers";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;700;900&display=swap" rel="stylesheet">
+
+<div class="container mt-4">
+    <h1 class="mb-4 text-uppercase fw-bold fst-italic" style="font-family: 'Titillium Web', sans-serif;">F1 Drivers @ViewBag.Year</h1>
+
+<link rel="stylesheet" href="~/css/driver-overrides.css" />
+<link rel="stylesheet" href="~/css/driver-flag-overrides.css" />
+<link rel="stylesheet" href="~/css/driver-team-logo-overrides.css" />
+
+    <div class="row g-4">
+        @foreach (var item in Model)
+        {
+            var driver = item.Driver;
+            var team = item.Team;
+            var bgColor = item.Team?.ColourHex ?? "#333";
+            
+            // Split name
+            var names = driver.FullName.Split(' ');
+            var firstName = names.Length > 0 ? names[0] : "";
+            var lastName = names.Length > 1 ? string.Join(" ", names.Skip(1)) : driver.FullName;
+            
+            // Get Assets
+            var flagUrl = F1App.Services.ImageHelper.GetCountryFlag(F1App.Services.ImageHelper.GetNationality(driver.Code));
+            var teamLogoUrl = F1App.Services.ImageHelper.GetTeamLogo(team?.Name);
+
+            <div class="col-lg-6">
+                <a asp-action="DriverDetails" asp-route-id="@driver.DriverId" asp-route-year="@ViewBag.Year" class="text-decoration-none">
+                    <div class="card h-100 border-0 overflow-hidden position-relative shadow-sm" style="background-color: @bgColor; border-radius: 12px; min-height: 220px;">
+                        
+                        <!-- Dotted Pattern Overlay -->
+                        <div class="position-absolute top-0 start-0 w-100 h-100" 
+                             style="background-image: radial-gradient(rgba(0, 0, 0, 0.2) 1px, transparent 1px); background-size: 4px 4px; pointer-events: none;">
+                        </div>
+
+                        <!-- Gradient for seamless blend -->
+                        <div class="position-absolute top-0 end-0 w-50 h-100" 
+                             style="background: linear-gradient(to right, transparent, rgba(0,0,0,0.1)); pointer-events: none;">
+                        </div>
+
+                        <div class="card-body p-4 position-relative" style="z-index: 2;">
+                            <div class="row h-100">
+                                <!-- Left Side: Info -->
+                                <div class="col-6 d-flex flex-column justify-content-between">
+                                    <div>
+                                        <div class="text-white" style="font-family: 'Titillium Web', sans-serif; line-height: 1.1;">
+                                            <div style="font-size: 1.2rem; font-weight: 400;">@firstName</div>
+                                            <div style="font-size: 2rem; font-weight: 900;">@lastName</div>
+                                        </div>
+                                        <div class="text-white mt-1" style="font-family: 'Titillium Web', sans-serif; font-size: 0.9rem; opacity: 0.8;">
+                                            @team?.Name
+                                        </div>
+                                        <div class="text-white mt-2" style="font-family: 'Titillium Web', sans-serif; font-size: 3.5rem; font-weight: 900; line-height: 1;">
+                                            @driver.DriverNumber
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Flag (Bottom Left) -->
+                                    @if (!string.IsNullOrEmpty(flagUrl))
+                                    {
+                                        <div class="driver-flag-container">
+                                            <img src="@flagUrl" alt="Flag" class="driver-flag-img" />
+                                        </div>
+                                    }
+                                </div>
+
+                                <!-- Right Side: Driver Image -->
+                                <div class="col-6 position-relative">
+                                    <!-- Team Logo (Top Right) -->
+                                    @if (!string.IsNullOrEmpty(teamLogoUrl))
+                                    {
+                                        <div class="driver-team-logo-container">
+                                            <img src="@teamLogoUrl" alt="Team Logo" class="driver-team-logo-img" />
+                                        </div>
+                                    }
+
+                                    <div class="driver-headshot-container">
+                                        <img src="@item.DriverHeadshotUrl" alt="@driver.FullName" class="d-block w-100" style="mask-image: linear-gradient(to bottom, black 85%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black 85%, transparent 100%);" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+</div>

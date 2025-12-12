@@ -1,0 +1,27 @@
+@model List<Season>
+@{
+    ViewData["Title"] = "Select Season";
+}
+
+<div class="text-center mb-5">
+    <h1 class="display-4 text-danger text-uppercase fw-bold fst-italic">Race Archive</h1>
+    <p class="lead text-muted">Select a season to view race results.</p>
+</div>
+
+<div class="row justify-content-center">
+    @foreach (var season in Model)
+    {
+        <div class="col-md-4 mb-4">
+            <a asp-action="RaceResults" asp-route-year="@season.Year" class="text-decoration-none">
+                <div class="card h-100 text-center border-0 shadow-lg" style="background: linear-gradient(145deg, #1f1f27, #15151e);">
+                    <div class="card-body d-flex flex-column justify-content-center align-items-center py-5">
+                        <h2 class="display-1 fw-bold text-white mb-0">@season.Year</h2>
+                        <div class="mt-3">
+                            <span class="badge bg-danger rounded-pill px-3 py-2">View Results <i class="bi bi-arrow-right"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    }
+</div>

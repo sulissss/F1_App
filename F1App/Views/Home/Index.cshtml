@@ -1,0 +1,29 @@
+﻿@model List<Season>
+@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="text-center">
+    <h1 class="display-4 text-danger">F1 Racing Hub</h1>
+    <p class="lead">Welcome to the ultimate Formula 1 statistics portal.</p>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-12">
+        <h2 class="mb-4">Recent Seasons</h2>
+        <div class="row">
+            @foreach (var season in Model.Take(6))
+            {
+                <div class="col-md-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <h3 class="card-title display-3">@season.Year</h3>
+                            <p class="card-text text-muted">Status: @season.Status</p>
+                            <a asp-action="RaceResults" asp-route-year="@season.Year" class="btn btn-primary">View Races</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

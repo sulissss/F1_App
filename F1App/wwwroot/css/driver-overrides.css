@@ -1,0 +1,18 @@
+/* 
+   Edit this file to adjust driver headshot sizing and positioning.
+   No compilation required - just save and refresh the page.
+*/
+
+.driver-headshot-container {
+    /* Adjust width to change size (e.g., 60%, 80%, 100%, 140%) */
+    width: 75%; 
+    
+    /* Adjust right to change horizontal alignment (e.g., 0, -10%, -20%) */
+    right: 20% !important; 
+    
+    /* Keep these as is usually */
+    bottom: -30px !important;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
