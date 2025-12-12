@@ -3,15 +3,16 @@
     ViewData["Title"] = "Race Archive";
 }
 
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;600;700;900&display=swap" rel="stylesheet">
 
 <div class="container-fluid py-5" style="background: linear-gradient(180deg, #0D0D12 0%, #15151E 100%); min-height: 100vh;">
     <!-- Header -->
     <div class="text-center mb-5">
-        <h1 class="display-3 text-white text-uppercase fw-bold" style="font-family: 'Titillium Web', sans-serif;">
-            <span style="color: #FF8000;"><i class="bi bi-flag-fill me-3"></i></span>RACE ARCHIVE
+        <h1 class="display-3 text-white text-uppercase fw-bold" style="font-family: 'Orbitron', sans-serif;">
+            <span style="color: #FF8000;">RACE</span> ARCHIVE
         </h1>
-        <p class="lead text-secondary fs-5">Select a season to explore all Grand Prix results</p>
+        <p class="lead text-secondary fs-5" style="font-family: 'Titillium Web', sans-serif;">Select a season to explore all Grand Prix results</p>
     </div>
 
     <!-- Season Cards -->
@@ -27,20 +28,10 @@
                         <div style="height: 4px; background: linear-gradient(90deg, #E80020, #FF8000);"></div>
                         
                         <div class="card-body d-flex flex-column justify-content-center align-items-center py-5">
-                            <div class="rounded-circle d-flex align-items-center justify-content-center mb-3" 
-                                 style="width: 100px; height: 100px; background: linear-gradient(135deg, rgba(232,0,32,0.2), rgba(255,128,0,0.2)); border: 2px solid rgba(255,128,0,0.5);">
-                                <h2 class="display-3 fw-bold text-white mb-0" style="font-family: 'Titillium Web', sans-serif;">@season.Year</h2>
-                            </div>
-                            <div class="mt-3">
-                                <span class="badge rounded-pill px-4 py-2 fw-bold" style="background: linear-gradient(90deg, #E80020, #FF8000); font-size: 0.9rem;">
-                                    <i class="bi bi-arrow-right-circle me-1"></i> EXPLORE RACES
-                                </span>
-                            </div>
-                        </div>
-
-                        <!-- Hover Overlay -->
-                        <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" 
-                             style="background: rgba(255,128,0,0.1); opacity: 0; transition: opacity 0.3s;">
+                            <h2 class="display-2 fw-bold text-white mb-3" style="font-family: 'Orbitron', sans-serif;">@season.Year</h2>
+                            <span class="badge rounded-pill px-4 py-2 fw-bold" style="background: linear-gradient(90deg, #E80020, #FF8000); font-size: 0.9rem;">
+                                EXPLORE RACES →
+                            </span>
                         </div>
                     </div>
                 </a>
@@ -51,7 +42,7 @@
     <!-- Back to Home -->
     <div class="text-center mt-5">
         <a href="/" class="btn btn-outline-light btn-lg">
-            <i class="bi bi-house-fill me-2"></i> Back to Home
+            ← Back to Home
         </a>
     </div>
 </div>
@@ -60,8 +51,5 @@
     .card:hover {
         transform: translateY(-10px) scale(1.02);
         box-shadow: 0 20px 40px rgba(255, 128, 0, 0.25) !important;
-    }
-    .card:hover .position-absolute {
-        opacity: 1 !important;
     }
 </style>
